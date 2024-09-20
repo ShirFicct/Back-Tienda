@@ -11,5 +11,6 @@ import java.util.List;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository < Usuario,Long>
-{  List<Usuario> findByRol(Rol rol);
+{  // Puedes agregar métodos de consulta personalizados si es necesario
+    List<Usuario> findByRol(Rol rol);
 }

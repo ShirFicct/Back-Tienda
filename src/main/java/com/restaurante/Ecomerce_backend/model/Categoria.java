@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.model;
 
+
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -10,22 +11,13 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table (name= "producto")
-public class Producto  implements Serializable {
+@Table (name= "categoria")
+public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long codigo;
+    private Long id;
     private String nombre;
     private String descripcion;
-    private String marca;
-    private String talla;
-    private String color;
-    private String imagen;
-    private float precio;
 
-
-    @ManyToOne
-    @JoinColumn(name ="id_subcategoria")
-    private Subcategoria subcategoria;
 
 }

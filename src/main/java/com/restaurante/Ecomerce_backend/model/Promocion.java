@@ -10,22 +10,15 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table (name= "producto")
-public class Producto  implements Serializable {
+@Table (name= "promocion")
+public class Promocion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long codigo;
+    private Long id;
     private String nombre;
     private String descripcion;
-    private String marca;
-    private String talla;
-    private String color;
-    private String imagen;
-    private float precio;
+    private float descuento;
 
-
-    @ManyToOne
-    @JoinColumn(name ="id_subcategoria")
-    private Subcategoria subcategoria;
-
+    @ManyToMany(mappedBy = "promociones")  // Relación inversa
+    private Set<Suscripcion> suscripcions = new HashSet<>();
 }

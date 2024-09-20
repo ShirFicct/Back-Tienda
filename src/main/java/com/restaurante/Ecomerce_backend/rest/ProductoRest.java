@@ -31,10 +31,19 @@ public class ProductoRest {
 
     // Crear o actualizar un producto
     @PostMapping
-    public Producto createOrUpdateProducto(@RequestBody Producto producto) {
+    public Producto createProducto(@RequestBody Producto producto) {
         return productoService.save(producto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        Optional<Producto> existingProducto = productoService.findById(id);
+        if (existingProducto.isPresent()) {
+            producto.setCodigo(id);  // Asegurarse de que el ID sea correcto
+            return ResponseEntity.ok(productoService.save(producto));
+        }
+        return ResponseEntity.notFound().build();
+    }
     // Eliminar un producto por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {

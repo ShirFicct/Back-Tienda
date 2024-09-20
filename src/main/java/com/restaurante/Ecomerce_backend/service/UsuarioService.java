@@ -12,9 +12,10 @@ import java.util.Optional;
 
 @Service
 public class UsuarioService {
+    //se gestionan las operaciones lógicas y el uso de los repositorios para acceder a los datos.
+
     @Autowired  //permite extraer datos de la BD
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private RolRepository rolRepository;
 
@@ -30,10 +31,24 @@ public class UsuarioService {
     public Optional<Usuario> findById(Long id) {
         return usuarioRepository.findById(id);
     }
+
     // Obtener usuarios por Rol
-    public List<Usuario> findByRol(Long rolId) {
-        Rol rol = rolRepository.findById(rolId)
+    public List<Usuario> findByRol(Long Id) {
+        Rol rol = rolRepository.findById(Id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
         return usuarioRepository.findByRol(rol);
+    }
+    // Método para asignar un rol a un usuario
+    public Usuario asignarRol(Long usuarioId, Long rolId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Rol rol = rolRepository.findById(rolId)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        usuario.setRol(rol);
+        return usuarioRepository.save(usuario);
+    }
+    public void deleteUsuario(Long id) {
+        usuarioRepository.deleteById(id);
     }
 }
