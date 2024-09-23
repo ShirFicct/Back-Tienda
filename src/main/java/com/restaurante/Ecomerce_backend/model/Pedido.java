@@ -12,6 +12,7 @@ public class Pedido {
 @GeneratedValue(strategy = GenerationType.SEQUENCE)
 private Long Nro_pedido;
 private Date fecha;
+private boolean estado;
 private String monto_total;
     @ManyToOne
     @JoinColumn(name="usuario_id")

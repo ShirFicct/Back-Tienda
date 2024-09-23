@@ -3,12 +3,16 @@ package com.restaurante.Ecomerce_backend.model;
 import jakarta.persistence.*;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table (name = "usuarios")
 public class Usuario implements Serializable {
     @Id
@@ -33,4 +37,7 @@ public class Usuario implements Serializable {
     @OneToOne
     @JoinColumn(name = "id_idioma") //foranea
     private Idioma idioma;
+
+    // Constructor vacío
+    public Usuario() {}
 }

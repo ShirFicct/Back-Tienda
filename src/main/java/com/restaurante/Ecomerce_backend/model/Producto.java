@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,5 +28,9 @@ public class Producto  implements Serializable {
     @ManyToOne
     @JoinColumn(name ="id_subcategoria")
     private Subcategoria subcategoria;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
+    private List<Inventario> inventarios;
+
 
 }
