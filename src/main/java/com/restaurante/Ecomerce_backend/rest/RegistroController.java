@@ -1,6 +1,7 @@
 package com.restaurante.Ecomerce_backend.rest;
 
 import com.restaurante.Ecomerce_backend.dto.UsuarioDTO;
+import com.restaurante.Ecomerce_backend.model.Usuario;
 import com.restaurante.Ecomerce_backend.response.AuthResponse;
 import com.restaurante.Ecomerce_backend.response.LoginRequest;
 import com.restaurante.Ecomerce_backend.service.UsuarioService;
@@ -26,6 +27,12 @@ public class RegistroController {
 	@PostMapping(value = "register")
 	public ResponseEntity<AuthResponse> register(@RequestBody UsuarioDTO userDto) {
 		return ResponseEntity.ok(userService.createUser(userDto));
+	}
+
+	//Register client
+	@PostMapping(value = "registerClient")
+	public ResponseEntity<Usuario> registerClient(@RequestBody UsuarioDTO userDto) {
+		return ResponseEntity.ok(userService.registrarUser(userDto));
 	}
 	
 	@PostMapping(value = "registerAdmin")
