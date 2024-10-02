@@ -4,12 +4,16 @@ import com.restaurante.Ecomerce_backend.model.Producto;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Data
 @Table (name= "suscripcion")
@@ -32,8 +36,6 @@ public class Suscripcion implements Serializable {
     )
     private Set<Promocion> promociones = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="id_usuario")
-private Usuario usuario;
+
 
 }

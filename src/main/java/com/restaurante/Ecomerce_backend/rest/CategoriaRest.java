@@ -1,13 +1,16 @@
 package com.restaurante.Ecomerce_backend.rest;
 
 import com.restaurante.Ecomerce_backend.model.Categoria;
+import com.restaurante.Ecomerce_backend.response.ApiResponse;
 import com.restaurante.Ecomerce_backend.service.CategoriaService;
+import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/categoria")
@@ -15,37 +18,102 @@ public class CategoriaRest {
     @Autowired
     private CategoriaService categoriaService;
 
+    // Listar todas las categorías
     @GetMapping
-    public List<Categoria> getCategoria() {
-        return categoriaService.getAllCategorias();
-
+    public ResponseEntity<ApiResponse<List<Categoria>>> listarCategorias() {
+        List<Categoria> categorias = categoriaService.listCategoria();
+        return new ResponseEntity<>(
+                ApiResponse.<List<Categoria>>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(categorias)
+                        .build(),
+                HttpStatus.OK
+        );
     }
 
+    // Obtener una categoría por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> getCategoriaById(@PathVariable Long id) {
-        Optional<Categoria> categoria = categoriaService.getCategoriaById(id);
-        return categoria.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public Categoria createCategoria(@RequestBody Categoria categoria) {
-        return categoriaService.saveCategoria(categoria);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Categoria> updateCategoria(@PathVariable Long id, @RequestBody Categoria categoria) {
-        Optional<Categoria> existingCategoria = categoriaService.getCategoriaById(id);
-        if (existingCategoria.isPresent()) {
-            categoria.setId(id);  // Asegurarse de que el ID sea correcto
-            return ResponseEntity.ok(categoriaService.saveCategoria(categoria));
+    public ResponseEntity<ApiResponse<Categoria>> obtenerCategoria(@PathVariable Long id) {
+        try {
+            Categoria categoria = categoriaService.obtenerCatId(id);
+            return new ResponseEntity<>(
+                    ApiResponse.<Categoria>builder()
+                            .statusCode(HttpStatus.OK.value())
+                            .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                            .data(categoria)
+                            .build(),
+                    HttpStatus.OK
+            );
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(
+                    ApiResponse.<Categoria>builder()
+                            .statusCode(e.getStatusCode().value())
+                            .message(e.getReason())
+                            .build(),
+                    e.getStatusCode()
+            );
         }
-        return ResponseEntity.notFound().build();
     }
 
+    // Crear una nueva categoría
+    @PostMapping
+    public ResponseEntity<ApiResponse<Categoria>> crearCategoria(@RequestBody Categoria categoria) {
+        Categoria categoriaNueva = categoriaService.crearCat(categoria);
+        return new ResponseEntity<>(
+                ApiResponse.<Categoria>builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.CREATED))
+                        .data(categoriaNueva)
+                        .build(),
+                HttpStatus.CREATED
+        );
+    }
+
+    // Actualizar una categoría
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Categoria>> actualizarCategoria(@PathVariable Long id, @RequestBody Categoria categoriaDetalles) {
+        try {
+            Categoria categoriaActualizada = categoriaService.actualizarCat(id, categoriaDetalles);
+            return new ResponseEntity<>(
+                    ApiResponse.<Categoria>builder()
+                            .statusCode(HttpStatus.OK.value())
+                            .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                            .data(categoriaActualizada)
+                            .build(),
+                    HttpStatus.OK
+            );
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(
+                    ApiResponse.<Categoria>builder()
+                            .statusCode(e.getStatusCode().value())
+                            .message(e.getReason())
+                            .build(),
+                    e.getStatusCode()
+            );
+        }
+    }
+
+    // Eliminar una categoría
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategoria(@PathVariable Long id) {
-        categoriaService.deleteCategoria(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Void>> eliminarCategoria(@PathVariable Long id) {
+        try {
+            categoriaService.eliminarCat(id);
+            return new ResponseEntity<>(
+                    ApiResponse.<Void>builder()
+                            .statusCode(HttpStatus.NO_CONTENT.value())
+                            .message(HttpStatusMessage.getMessage(HttpStatus.NO_CONTENT))
+                            .build(),
+                    HttpStatus.NO_CONTENT
+            );
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(
+                    ApiResponse.<Void>builder()
+                            .statusCode(e.getStatusCode().value())
+                            .message(e.getReason())
+                            .build(),
+                    e.getStatusCode()
+            );
+        }
     }
 }

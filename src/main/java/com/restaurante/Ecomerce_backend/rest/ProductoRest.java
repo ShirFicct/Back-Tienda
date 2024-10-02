@@ -8,18 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/producto")
+@RequestMapping("/api/producto") //
 public class ProductoRest {
+
     @Autowired
     private ProductoService productoService;
+
     // Listar todos los productos
     @GetMapping
     public ResponseEntity<ApiResponse<List<Producto>>> listarProductos() {
@@ -37,25 +35,15 @@ public class ProductoRest {
     // Obtener un producto por ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Producto>> obtenerProducto(@PathVariable Long id) {
-        try {
-            Producto producto = productoService.obtenerProductoPorId(id);
-            return new ResponseEntity<>(
-                    ApiResponse.<Producto>builder()
-                            .statusCode(HttpStatus.OK.value())
-                            .message(HttpStatusMessage.getMessage(HttpStatus.OK))
-                            .data(producto)
-                            .build(),
-                    HttpStatus.OK
-            );
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(
-                    ApiResponse.<Producto>builder()
-                            .statusCode(e.getStatusCode().value())
-                            .message(e.getReason())
-                            .build(),
-                    e.getStatusCode()
-            );
-        }
+        Producto producto = productoService.obtenerProductoPorId(id);
+        return new ResponseEntity<>(
+                ApiResponse.<Producto>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(producto)
+                        .build(),
+                HttpStatus.OK
+        );
     }
 
     // Crear un nuevo producto
@@ -73,49 +61,29 @@ public class ProductoRest {
     }
 
     // Actualizar un producto
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Producto>> actualizarProducto(@PathVariable Long id, @RequestBody Producto productoDetalles) {
-        try {
-            Producto productoActualizado = productoService.actualizarProducto(id, productoDetalles);
-            return new ResponseEntity<>(
-                    ApiResponse.<Producto>builder()
-                            .statusCode(HttpStatus.OK.value())
-                            .message(HttpStatusMessage.getMessage(HttpStatus.OK))
-                            .data(productoActualizado)
-                            .build(),
-                    HttpStatus.OK
-            );
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(
-                    ApiResponse.<Producto>builder()
-                            .statusCode(e.getStatusCode().value())
-                            .message(e.getReason())
-                            .build(),
-                    e.getStatusCode()
-            );
-        }
+        Producto productoActualizado = productoService.actualizarProducto(id, productoDetalles);
+        return new ResponseEntity<>(
+                ApiResponse.<Producto>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(productoActualizado)
+                        .build(),
+                HttpStatus.OK
+        );
     }
 
     // Eliminar un producto
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminarProducto(@PathVariable Long id) {
-        try {
-            productoService.eliminarProducto(id);
-            return new ResponseEntity<>(
-                    ApiResponse.<Void>builder()
-                            .statusCode(HttpStatus.NO_CONTENT.value())
-                            .message(HttpStatusMessage.getMessage(HttpStatus.NO_CONTENT))
-                            .build(),
-                    HttpStatus.NO_CONTENT
-            );
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(
-                    ApiResponse.<Void>builder()
-                            .statusCode(e.getStatusCode().value())
-                            .message(e.getReason())
-                            .build(),
-                    e.getStatusCode()
-            );
-        }
+        productoService.eliminarProducto(id);
+        return new ResponseEntity<>(
+                ApiResponse.<Void>builder()
+                        .statusCode(HttpStatus.NO_CONTENT.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.NO_CONTENT))
+                        .build(),
+                HttpStatus.NO_CONTENT
+        );
     }
 }

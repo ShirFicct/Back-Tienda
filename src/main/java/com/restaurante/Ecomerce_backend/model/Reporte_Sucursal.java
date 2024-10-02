@@ -7,25 +7,27 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
+
 @Entity
 @Data
 @Getter
 @Setter
-@Table(name = "inventario")
+@Table(name = "reporte_sucursal")
 
-public class Inventario implements Serializable {
+public class Reporte_Sucursal implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    private long Nro;
 
-        private Integer stock;
+
         private LocalDate fechaInicio;
         private LocalDate fechaFinal;
+
 
         @ManyToOne
         @JoinColumn(name = "producto_id")
         private Producto producto;
+
 
         @ManyToOne
         @JoinColumn(name = "sucursal_id")
@@ -34,5 +36,5 @@ public class Inventario implements Serializable {
         // Getters y setters
 
 
-    public Inventario() {}
+    public Reporte_Sucursal() {}
 }

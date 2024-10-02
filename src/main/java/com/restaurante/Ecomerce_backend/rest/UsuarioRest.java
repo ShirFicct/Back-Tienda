@@ -1,70 +1,106 @@
 package com.restaurante.Ecomerce_backend.rest;
-//expone los endpoints para gestionar los usuarios y asignarles roles
-import com.restaurante.Ecomerce_backend.service.UsuarioService;
+
+import com.restaurante.Ecomerce_backend.dto.UsuarioDTO;
 import com.restaurante.Ecomerce_backend.model.Usuario;
+import com.restaurante.Ecomerce_backend.response.ApiResponse;
+import com.restaurante.Ecomerce_backend.service.UsuarioService;
+import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping  ("/usuario")
-
+@RequestMapping("api/user")
 public class UsuarioRest {
 
-    //expone los endpoints REST para interactuar con las entidades
-    @Autowired
-    private UsuarioService usuarioService;
+	@Autowired
+	private UsuarioService usuarioService;
 
-    @GetMapping(path = "/listar")
-    public ResponseEntity <List<Usuario>>ListarUser(){
-        return ResponseEntity.ok(usuarioService.findAll());
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<Usuario>>> listarUsuarios() {
+		List<Usuario> user = usuarioService.listUsuario();
+		return new ResponseEntity<>(
+				ApiResponse.<List<Usuario>>builder()
+						.statusCode(HttpStatus.OK.value())
+						.message(HttpStatusMessage.getMessage(HttpStatus.OK))
+						.data(user)
+						.build(),
+				HttpStatus.OK
+		);
+	}
 
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponse<Usuario>> obtenerUsuario(@PathVariable Long id) {
+		Usuario usuariosOpt = usuarioService.obtenerUserPorId(id);
+		if (usuariosOpt == null) {
+			return new ResponseEntity<>(ApiResponse.<Usuario>builder()
+					.statusCode(HttpStatus.NOT_FOUND.value())
+					.message("Usuario no encontrado")
+					.build(), HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(ApiResponse.<Usuario>builder()
+				.statusCode(HttpStatus.OK.value())
+				.message(HttpStatusMessage.getMessage(HttpStatus.OK))
+				.data(usuariosOpt)
+				.build(),
+				HttpStatus.OK
+		);
+	}
 
 
-    /* Asignar un rol a un usuario*/
-    @PostMapping("/{usuarioId}/asignar-rol/{rolId}")
-    public ResponseEntity<Usuario> asignarRol(@PathVariable Long usuarioId, @PathVariable Long rolId) {
-        try {
-            Usuario usuarioConRol = usuarioService.asignarRol(usuarioId, rolId);
-            return ResponseEntity.ok(usuarioConRol);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
+	@PatchMapping("/{id}")
+	public ResponseEntity<ApiResponse<Usuario>> actualizarUsuario(@PathVariable Long id, @Valid @RequestBody UsuarioDTO userDTO, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			List<String> errors = bindingResult.getAllErrors().stream()
+					.map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList());
+			return new ResponseEntity<>(
+					ApiResponse.<Usuario>builder()
+							.errors(errors)
+							.build(),
+					HttpStatus.BAD_REQUEST
+			);
+		}
 
-    // Obtener usuarios por rol
-    @GetMapping("/rol/{rolId}")
-    public ResponseEntity<List<Usuario>> obtenerUsuariosPorRol(@PathVariable Long rolId) {
-        List<Usuario> usuarios = usuarioService.findByRol(rolId);
-        if (usuarios.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(usuarios);
-    }
+		Usuario usuarioActualizado = usuarioService.updateUser(id, userDTO); // Cambiado
+		return new ResponseEntity<>(
+				ApiResponse.<Usuario>builder()
+						.statusCode(HttpStatus.OK.value())
+						.message(HttpStatusMessage.getMessage(HttpStatus.OK))
+						.data(usuarioActualizado)
+						.build(),
+				HttpStatus.OK
+		);
+	}
 
-    // Obtener un usuario por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id) {
-        Optional<Usuario> usuario = usuarioService.findById(id);
-        return usuario.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ApiResponse<Void>> eliminarUsuario(@PathVariable Long id) {
+		usuarioService.deleteUser(id);
+		return new ResponseEntity<>(
+				ApiResponse.<Void>builder()
+						.statusCode(HttpStatus.NO_CONTENT.value())
+						.message(HttpStatusMessage.getMessage(HttpStatus.NO_CONTENT))
+						.build(),
+				HttpStatus.NO_CONTENT
+		);
+	}
 
-    // Eliminar un usuario por ID
-    @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
-        try {
-            usuarioService.deleteUsuario(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
+	@PostMapping("/{id}")
+	public ResponseEntity<ApiResponse<Void>> activarUsuario(@PathVariable Long id) {
+		usuarioService.activeUser(id);
+		return new ResponseEntity<>(
+				ApiResponse.<Void>builder()
+						.statusCode(HttpStatus.OK.value())
+						.message(HttpStatusMessage.getMessage(HttpStatus.OK))
+						.build(),
+				HttpStatus.OK
+		);
+	}
 }

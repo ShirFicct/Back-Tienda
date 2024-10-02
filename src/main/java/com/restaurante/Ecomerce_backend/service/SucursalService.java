@@ -1,6 +1,5 @@
 package com.restaurante.Ecomerce_backend.service;
 
-import com.restaurante.Ecomerce_backend.model.Producto;
 import com.restaurante.Ecomerce_backend.model.Sucursal;
 import com.restaurante.Ecomerce_backend.repositorios.SucursalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class SucursalService {
         return sucursalRepository.save(sucursal);
     }
 
-    public Sucursal actualizarSucursal(Sucursal sucursalDetalle) {
+    public Sucursal actualizarSucursal(Long id, Sucursal sucursalDetalle) {
         Sucursal sucursal = obtSucursal(sucursalDetalle.getId());
         sucursal.setNombre(sucursalDetalle.getNombre());
         sucursal.setDireccion(sucursalDetalle.getDireccion());
