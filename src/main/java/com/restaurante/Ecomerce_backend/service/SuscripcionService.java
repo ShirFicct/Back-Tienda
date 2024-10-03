@@ -32,8 +32,6 @@ public class SuscripcionService {
         Suscripcion suscripcion1 = obtSuscripcionById(suscripcion.getId());
         suscripcion1.setNombre(suscripcion.getNombre());
         suscripcion1.setDescripcion(suscripcion.getDescripcion());
-        suscripcion1.setFecha_Inicio(suscripcion.getFecha_Inicio());
-        suscripcion1.setFecha_Fin(suscripcion.getFecha_Fin());
         suscripcion1.setPrecio(suscripcion.getPrecio());
         suscripcion1.setEstado(suscripcion.isEstado());
         return suscripcionRepository.save(suscripcion1);

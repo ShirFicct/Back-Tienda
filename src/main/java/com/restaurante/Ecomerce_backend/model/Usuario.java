@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.Email;
@@ -47,17 +48,20 @@ public class Usuario implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "idUsuario"),  // FK de Producto en la tabla intermedia
             inverseJoinColumns = @JoinColumn(name = "idRol")  // FK de Categoría en la tabla intermedia
     )
+    @JsonIgnore
     private Set<Rol> roles;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "suscripcion_id") // Llave foránea en la tabla Usuario
-    private Suscripcion suscripcion;
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    private Set<UserSuscripcion> userSuscripciones = new HashSet<>();
+
 
     @OneToOne
     @JoinColumn(name = "id_idioma") //foranea
     private Idioma idioma;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore  // Evita la serialización de los pedidos en la respuesta JSON
     private List<Pedido> pedidos;
     // Constructor vacío
     public Usuario() {}

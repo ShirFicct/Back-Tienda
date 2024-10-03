@@ -33,7 +33,7 @@ public Promocion obtPromocionId (Long id){
     Promocion promoExist= obtPromocionId(promocion.getId());
     promoExist.setNombre(promocion.getNombre());
     promoExist.setDescripcion(promocion.getDescripcion());
-    promoExist.setDescuento(promocion.getDescuento());
+
     return promocionRepository.save(promoExist);
  }
 

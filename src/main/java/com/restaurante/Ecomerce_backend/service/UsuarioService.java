@@ -91,6 +91,7 @@ public class UsuarioService {
 //		List<Rol> roles  = rolService.listarRoles();
         Rol roles = rolService.obtenerRol(userDto.getIdRol());
         Set<Rol> rolesSet = new HashSet<>();
+
         rolesSet.add(roles);
         Usuario usuario = new Usuario(userDto.getNombre(),
                 userDto.getEmail(),

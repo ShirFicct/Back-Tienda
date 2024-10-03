@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.rest;
 
+import com.restaurante.Ecomerce_backend.dto.ProductoDTO;
 import com.restaurante.Ecomerce_backend.model.Producto;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
 import com.restaurante.Ecomerce_backend.service.ProductoService;
@@ -48,7 +49,7 @@ public class ProductoRest {
 
     // Crear un nuevo producto
     @PostMapping
-    public ResponseEntity<ApiResponse<Producto>> crearProducto(@RequestBody Producto producto) {
+    public ResponseEntity<ApiResponse<Producto>> crearProducto(@RequestBody ProductoDTO producto) {
         Producto nuevoProducto = productoService.crearProducto(producto);
         return new ResponseEntity<>(
                 ApiResponse.<Producto>builder()
@@ -62,7 +63,7 @@ public class ProductoRest {
 
     // Actualizar un producto
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Producto>> actualizarProducto(@PathVariable Long id, @RequestBody Producto productoDetalles) {
+    public ResponseEntity<ApiResponse<Producto>> actualizarProducto(@PathVariable Long id, @RequestBody ProductoDTO productoDetalles) {
         Producto productoActualizado = productoService.actualizarProducto(id, productoDetalles);
         return new ResponseEntity<>(
                 ApiResponse.<Producto>builder()

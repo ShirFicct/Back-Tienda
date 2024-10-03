@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.rest;
 
+import com.restaurante.Ecomerce_backend.dto.SubcategoriaDTO;
 import com.restaurante.Ecomerce_backend.model.Subcategoria;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
 import com.restaurante.Ecomerce_backend.service.SubCategoriaService;
@@ -49,7 +50,7 @@ public class SubCategoriaRest {
 
     // Crear una nueva subcategoría
     @PostMapping
-    public ResponseEntity<ApiResponse<Subcategoria>> crearSubcategoria(@RequestBody Subcategoria subcategoria) {
+    public ResponseEntity<ApiResponse<Subcategoria>> crearSubcategoria(@RequestBody SubcategoriaDTO subcategoria) {
         Subcategoria nuevaSubcategoria = subcategoriaService.crearSubCat(subcategoria);
         return new ResponseEntity<>(
                 ApiResponse.<Subcategoria>builder()
@@ -63,7 +64,7 @@ public class SubCategoriaRest {
 
     // Actualizar una subcategoría
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Subcategoria>> actualizarSubcategoria(@PathVariable Long id, @RequestBody Subcategoria subcategoriaDetalles) {
+    public ResponseEntity<ApiResponse<Subcategoria>> actualizarSubcategoria(@PathVariable Long id, @RequestBody SubcategoriaDTO subcategoriaDetalles) {
         Subcategoria subcategoriaActualizada = subcategoriaService.actualizarSubCat(id, subcategoriaDetalles);
         return new ResponseEntity<>(
                 ApiResponse.<Subcategoria>builder()

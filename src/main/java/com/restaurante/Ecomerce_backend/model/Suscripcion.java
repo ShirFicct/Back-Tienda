@@ -23,18 +23,9 @@ public class Suscripcion implements Serializable {
     private Long id;
     private String nombre;
     private String descripcion;
-    private LocalDateTime Fecha_Inicio;
-    private LocalDateTime Fecha_Fin;
     private float precio;
     private boolean estado;
 
-    @ManyToMany
-    @JoinTable(
-            name = "beneficio",  // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "idSuscripcion"),  // FK de Producto en la tabla intermedia
-            inverseJoinColumns = @JoinColumn(name = "idPromocion")  // FK de Categoría en la tabla intermedia
-    )
-    private Set<Promocion> promociones = new HashSet<>();
 
 
 

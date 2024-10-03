@@ -17,7 +17,7 @@ import java.util.List;
 public class Producto  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long codigo;
+    private Long codProducto;
     private String nombre;
     private String descripcion;
     private String marca;

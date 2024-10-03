@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Rol implements Serializable {
             joinColumns = @JoinColumn(name = "rol_id", referencedColumnName = "id"),
             inverseJoinColumns =  @JoinColumn(name = "permiso_id", referencedColumnName = "id")
     )
+    @JsonIgnore
     private Set<Permiso> permiso;
 
     public Rol() {}

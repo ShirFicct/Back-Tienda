@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.rest;
 
+import com.restaurante.Ecomerce_backend.dto.Nota_VentaDTO;
 import com.restaurante.Ecomerce_backend.model.Nota_venta;
 import com.restaurante.Ecomerce_backend.model.Producto;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
@@ -46,7 +47,7 @@ public class Nota_VentaRest {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Nota_venta>> crearNota(@RequestBody Nota_venta nota_venta) {
+    public ResponseEntity<ApiResponse<Nota_venta>> crearNota(@RequestBody Nota_VentaDTO nota_venta) {
         Nota_venta nuevoNota = nota_ventaService.crearNota(nota_venta);
         return new ResponseEntity<>(
                 ApiResponse.<Nota_venta>builder()
@@ -59,7 +60,7 @@ public class Nota_VentaRest {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Nota_venta>> actualizarNota(@PathVariable Long id, @RequestBody Nota_venta nota_venta) {
+    public ResponseEntity<ApiResponse<Nota_venta>> actualizarNota(@PathVariable Long id, @RequestBody Nota_VentaDTO nota_venta) {
         Nota_venta notaActualizado = nota_ventaService.actualizarNota(id,nota_venta);
         return new ResponseEntity<>(
                 ApiResponse.<Nota_venta>builder()

@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.rest;
 
+import com.restaurante.Ecomerce_backend.dto.PedidoDTO;
 import com.restaurante.Ecomerce_backend.model.Pedido;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
 import com.restaurante.Ecomerce_backend.service.PedidoService;
@@ -48,7 +49,7 @@ public class PedidoRest {
 
     // Crear un nuevo pedido
     @PostMapping
-    public ResponseEntity<ApiResponse<Pedido>> crearPedido(@RequestBody Pedido pedido) {
+    public ResponseEntity<ApiResponse<Pedido>> crearPedido(@RequestBody PedidoDTO pedido) {
         Pedido nuevoPedido = pedidoService.crearPedido(pedido);
         return new ResponseEntity<>(
                 ApiResponse.<Pedido>builder()
@@ -62,7 +63,7 @@ public class PedidoRest {
 
     // Actualizar un pedido
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Pedido>> actualizarPedido(@PathVariable Long id, @RequestBody Pedido pedidoDetalles) {
+    public ResponseEntity<ApiResponse<Pedido>> actualizarPedido(@PathVariable Long id, @RequestBody PedidoDTO pedidoDetalles) {
         Pedido pedidoActualizado = pedidoService.modificarPedido(id, pedidoDetalles);
         return new ResponseEntity<>(
                 ApiResponse.<Pedido>builder()
