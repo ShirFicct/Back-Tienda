@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copiar el archivo JAR de la aplicación al contenedor
-COPY target/Ecomerce-backend-0.0.1-SNAPSHOT.jar /app/Ecomerce-backend.jar
+COPY Ecomerce-backend-0.0.1-SNAPSHOT.jar /app/Ecomerce-backend.jar
 
 # Exponer el puerto de la aplicación
 EXPOSE 8080
