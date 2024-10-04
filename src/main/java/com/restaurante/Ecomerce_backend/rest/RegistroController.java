@@ -7,10 +7,9 @@ import com.restaurante.Ecomerce_backend.response.LoginRequest;
 import com.restaurante.Ecomerce_backend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -40,4 +39,9 @@ public class RegistroController {
 		return ResponseEntity.ok(userService.createUserAdmin(userDto));
 	}
 
+	@GetMapping("/me")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<AuthResponse> getCurrentUser(Authentication authentication) {
+		return ResponseEntity.ok(userService.loader(authentication));
+	}
 }
