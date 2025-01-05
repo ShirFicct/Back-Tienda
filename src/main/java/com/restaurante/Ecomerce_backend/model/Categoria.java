@@ -22,6 +22,7 @@ public class Categoria  implements Serializable{
     private Long id;
     private String nombre;
     private String descripcion;
+    private boolean disponible;
 
 
 }

@@ -23,7 +23,13 @@ public class UsuarioDTO {
    @NotEmpty(message = "ingrese su contraseña")
     private String password;
 
+   private String direccion;
+   private String telefono;
+   private String Nit;
 private  Long idRol;
+private Long id_Suscripcion;
+private Long id_Idioma;
+
 
 
 }

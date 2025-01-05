@@ -1,10 +1,7 @@
 package com.restaurante.Ecomerce_backend.rest;
 
 import com.restaurante.Ecomerce_backend.dto.ProductoResDTO;
-import com.restaurante.Ecomerce_backend.model.ProductoReseva;
-import com.restaurante.Ecomerce_backend.model.ProductoReseva;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
-import com.restaurante.Ecomerce_backend.service.ProdReservaService;
 import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

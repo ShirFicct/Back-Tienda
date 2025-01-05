@@ -13,11 +13,12 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name = "idioma")
-public class Idioma  implements Serializable {
+public class Idioma implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String nombre;
+    private boolean activo;
 
     @OneToOne(mappedBy = "idioma")
     private Usuario usuario;

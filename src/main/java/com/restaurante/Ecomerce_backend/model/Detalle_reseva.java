@@ -5,25 +5,27 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Entity
 @Data
 @Getter
 @Setter
-@Table(name = "productoPromo")
-public class ProductoPromo implements Serializable {
+@Table(name = "detalle_reserva")
+public class Detalle_reseva {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    private Integer cantidad;
+    private float precioUnitario;
+    private Float subtotal;
 
+    private boolean estado;
     @ManyToOne
-    @JoinColumn(name="codigoP")
+    @JoinColumn(name = "id_producto",nullable = false)
     private Producto producto;
 
     @ManyToOne
-    @JoinColumn(name="idPromo")
-    private Promocion promo;
-
-    private boolean estado;
+    @JoinColumn(name = "id_reserva",nullable = false)
+    private Reserva reserva;
 }
+
+

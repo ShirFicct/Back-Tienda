@@ -33,6 +33,45 @@ public class ProductoRest {
         );
     }
 
+    @GetMapping("/productos/temporada/{temporadaId}")
+    public ResponseEntity<ApiResponse<List<Producto>>> listarProductoByTemporada(@PathVariable Long id) {
+        List<Producto> productos = productoService.getProductosByTemporada(id);
+        return new ResponseEntity<>(
+                ApiResponse.<List<Producto>>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(productos)
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/productos/subcategoria/{subcategoriaId}")
+    public ResponseEntity<ApiResponse<List<Producto>>> listarProductoBySubCategoria(@PathVariable Long id) {
+        List<Producto> productos = productoService.getProductosBySubcategoria(id);
+        return new ResponseEntity<>(
+                ApiResponse.<List<Producto>>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(productos)
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/productos/marca/{marcaId}")
+    public ResponseEntity<ApiResponse<List<Producto>>> listarProductoByMARCA(@PathVariable Long id) {
+        List<Producto> productos = productoService.getProductosByMarca(id);
+        return new ResponseEntity<>(
+                ApiResponse.<List<Producto>>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(productos)
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
     // Obtener un producto por ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Producto>> obtenerProducto(@PathVariable Long id) {

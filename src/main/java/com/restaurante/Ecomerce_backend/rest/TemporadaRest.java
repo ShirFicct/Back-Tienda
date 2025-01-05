@@ -21,7 +21,7 @@ public class TemporadaRest {
     // Listar todas las temporadas
     @GetMapping
     public ResponseEntity<ApiResponse<List<Temporada>>> listarTemporadas() {
-        List<Temporada> temporadas = temporadaService.listTemporadas();
+        List<Temporada> temporadas = temporadaService.listarTemporadas();
         return new ResponseEntity<>(
                 ApiResponse.<List<Temporada>>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -35,7 +35,7 @@ public class TemporadaRest {
     // Obtener una temporada por ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Temporada>> obtenerTemporada(@PathVariable Long id) {
-        Temporada temporada = temporadaService.obtTemporadaId(id);
+        Temporada temporada = temporadaService.obtenerTemporadaPorId(id);
         return new ResponseEntity<>(
                 ApiResponse.<Temporada>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -49,7 +49,7 @@ public class TemporadaRest {
     // Crear una nueva temporada
     @PostMapping
     public ResponseEntity<ApiResponse<Temporada>> crearTemporada(@RequestBody Temporada temporada) {
-        Temporada nuevaTemporada = temporadaService.createTemporada(temporada);
+        Temporada nuevaTemporada = temporadaService.crearTemporada(temporada);
         return new ResponseEntity<>(
                 ApiResponse.<Temporada>builder()
                         .statusCode(HttpStatus.CREATED.value())

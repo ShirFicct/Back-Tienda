@@ -26,16 +26,6 @@ public class IdiomaService {
         return idiomaRepository.findAll();
     }
 
-    public List<IdiomaDTO> lisIdioma() {
-        List<Idioma> idiomaNuevo = idiomaRepository.findAll();
-        return idiomaNuevo.stream()
-                .map(idioma -> modelMapper.map(idioma,IdiomaDTO.class))
-                .collect(Collectors.toList());
-    }
-    public List<Idioma> listProductos() {
-        return idiomaRepository.findAll();
-
-    }
 
     // Obtener un producto por ID
     public Idioma obtenerIdiomaPorId(Long id) {
@@ -45,6 +35,7 @@ public class IdiomaService {
 
     // Crear un nuevo producto
     public Idioma crearIdioma(Idioma idioma) {
+
         return idiomaRepository.save(idioma);
     }
 

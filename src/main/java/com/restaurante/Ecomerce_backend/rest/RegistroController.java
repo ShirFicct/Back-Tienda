@@ -31,7 +31,7 @@ public class RegistroController {
 	//Register client
 	@PostMapping(value = "registerClient")
 	public ResponseEntity<Usuario> registerClient(@RequestBody UsuarioDTO userDto) {
-		return ResponseEntity.ok(userService.registrarUser(userDto));
+		return ResponseEntity.ok(userService.registrarClient(userDto));
 	}
 	
 	@PostMapping(value = "registerAdmin")

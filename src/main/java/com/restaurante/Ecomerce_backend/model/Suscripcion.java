@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -25,8 +26,16 @@ public class Suscripcion implements Serializable {
     private String descripcion;
     private float precio;
     private boolean estado;
+    private float descuento;
 
 
+
+
+    @OneToMany(mappedBy = "suscripcion",cascade= CascadeType.ALL, orphanRemoval = true)
+    private List<Usuario> usuario;
+
+    @OneToMany(mappedBy = "suscripcion",cascade= CascadeType.ALL, orphanRemoval = true)
+    private List<Promocion> promocions;
 
 
 }

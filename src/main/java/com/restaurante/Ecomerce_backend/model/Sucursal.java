@@ -22,7 +22,7 @@ public class Sucursal  implements Serializable{
     private String direccion;
 
     @OneToMany(mappedBy = "sucursal", cascade = CascadeType.ALL)
-    private List<Reporte_Sucursal> reporteSucursals;
+    private List<Inventario> reporteSucursals;
 
 
 

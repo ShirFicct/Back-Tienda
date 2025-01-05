@@ -1,12 +1,10 @@
 package com.restaurante.Ecomerce_backend.service;
 
+import com.restaurante.Ecomerce_backend.dto.DetallePedidoDTO;
 import com.restaurante.Ecomerce_backend.dto.PedidoDTO;
-import com.restaurante.Ecomerce_backend.model.Met_Pago;
-import com.restaurante.Ecomerce_backend.model.Pedido;
-import com.restaurante.Ecomerce_backend.model.Usuario;
-import com.restaurante.Ecomerce_backend.repositorios.Met_PagoRepository;
-import com.restaurante.Ecomerce_backend.repositorios.PedidoRepository;
-import com.restaurante.Ecomerce_backend.repositorios.UsuarioRepository;
+import com.restaurante.Ecomerce_backend.model.*;
+import com.restaurante.Ecomerce_backend.repositorios.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,76 +18,164 @@ import java.util.Set;
 public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
-
+    @Autowired
+    private InventarioRepository inventarioRepository;
     @Autowired
     private UsuarioService usuarioService;
-
     @Autowired
     private Met_pagoService met_pagoService;
-
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
+    private ProductoService productoService;
     @Autowired
-    private Met_PagoRepository met_pagoRepository;
+    private DetallePedRepository detallePedRepository;
 
     public List<Pedido> listPedido() {
         return pedidoRepository.findAll();
     }
 
-    // Obtener un pedido por ID
+    public List<Pedido> listByUser(Long idUsuario) {
+        Usuario user = obtenerUsuarioPorId(idUsuario);
+        return pedidoRepository.findPedidosByUserIdByUserId(user.getId());
+    }
+
     public Pedido obtenerPedidoPorId(Long id) {
-        return pedidoRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no encontrado"));
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no encontrado"));
     }
 
-    // Crear un nuevo producto
     public Pedido crearPedido(PedidoDTO pedidoDTO) {
-       if (pedidoDTO== null) {
-           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pedido no puede ser nula");
-       }
-        Usuario user = usuarioService.obtenerUserPorId(pedidoDTO.getUsuarioId());
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado");
-        }
-        Met_Pago metPago= met_pagoService.obtMetoPorId(pedidoDTO.getIdMetPago());
-        if (metPago == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Método de pago no encontrado");
-        }
+        validarPedidoDTO(pedidoDTO);
 
-        Pedido pedidonuevo=new Pedido();
-        pedidonuevo.setFecha(pedidoDTO.getFecha());
-        pedidonuevo.setEstado(pedidoDTO.isEstado());
-        pedidonuevo.setMonto_total(pedidoDTO.getMonto_total());
-        pedidonuevo.setUsuario(user);
-        pedidonuevo.setMet_Pago(metPago);
-        return pedidoRepository.save(pedidonuevo);
+        Usuario user = usuarioService.obtenerUserPorId(pedidoDTO.getUsuarioId());
+        Met_Pago metPago = met_pagoService.obtMetoPorId(pedidoDTO.getIdMetPago());
+
+        Pedido pedido = inicializarPedido(pedidoDTO, user, metPago);
+        Pedido pedidoGuardado = pedidoRepository.save(pedido);
+
+        float montoTotal = procesarDetallesPedido(pedidoDTO.getDetalle(), pedidoGuardado, user);
+        pedidoGuardado.setMonto_total(aplicarDescuentoPorSuscripcion(montoTotal, user));
+        return pedidoRepository.save(pedidoGuardado);
     }
 
+    public Pedido modificarPedido(Long id, PedidoDTO pedidoDTO) {
+        Pedido pedidoExistente = obtenerPedidoPorId(id);
+        validarPedidoDTO(pedidoDTO);
 
-    public Pedido modificarPedido(Long id, PedidoDTO pedido) {
-        Pedido pedidoExistente= obtenerPedidoPorId(id);
-        if (pedidoExistente == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no encontrado");
-        }
-        Usuario user=usuarioRepository.findById(pedido.getUsuarioId())
-                .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "El pedido no fue encontrado"));
+        Usuario user = usuarioService.obtenerUserPorId(pedidoDTO.getUsuarioId());
+        Met_Pago metPago = met_pagoService.obtMetoPorId(pedidoDTO.getIdMetPago());
 
-        Met_Pago metPago=met_pagoRepository.findById(pedido.getIdMetPago())
-                .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "El pedido no fue encontrado"));
+        actualizarPedido(pedidoExistente, pedidoDTO, user, metPago);
 
-        pedidoExistente.setUsuario(user);
-        pedidoExistente.setMet_Pago(metPago);
-        pedidoExistente.setEstado(pedido.isEstado());
-        pedidoExistente.setMonto_total(pedido.getMonto_total());
-        pedidoExistente.setFecha(pedido.getFecha());
-
+        float montoTotal = procesarDetallesPedido(pedidoDTO.getDetalle(), pedidoExistente, user);
+        pedidoExistente.setMonto_total(aplicarDescuentoPorSuscripcion(montoTotal, user));
         return pedidoRepository.save(pedidoExistente);
     }
 
-    // Eliminar un pedido
     public void eliminarPedido(Long id) {
         Pedido pedido = obtenerPedidoPorId(id);
-        pedidoRepository.delete(pedido);
+        pedido.setEstado("cancelado");
+        pedidoRepository.save(pedido);
+    }
+
+    // Métodos auxiliares
+    private Usuario obtenerUsuarioPorId(Long idUsuario) {
+        return usuarioService.obtenerUserPorId(idUsuario);
+    }
+
+    private void validarPedidoDTO(PedidoDTO pedidoDTO) {
+        if (pedidoDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El pedido no puede ser nulo");
+        }
+    }
+
+    private Pedido inicializarPedido(PedidoDTO pedidoDTO, Usuario user, Met_Pago metPago) {
+        Pedido pedido = new Pedido();
+        pedido.setFecha(pedidoDTO.getFecha());
+        pedido.setEstado(pedidoDTO.getEstado());
+        pedido.setUsuario(user);
+        pedido.setMet_Pago(metPago);
+        return pedido;
+    }
+
+    private void actualizarPedido(Pedido pedido, PedidoDTO pedidoDTO, Usuario user, Met_Pago metPago) {
+        pedido.setUsuario(user);
+        pedido.setMet_Pago(metPago);
+        pedido.setEstado(pedidoDTO.getEstado());
+        pedido.setFecha(pedidoDTO.getFecha());
+    }
+
+    private float procesarDetallesPedido(List<Detalle_Pedido> detalles, Pedido pedido, Usuario user) {
+        float montoTotal = 0f;
+
+        for (Detalle_Pedido detalle : detalles) {
+            Producto prod = detalle.getProducto();
+            if (prod == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado");
+            }
+
+            // Llama a crearDetallePedido para procesar el detalle
+            detalle = crearDetallePedido(detalle, pedido, prod, user);
+
+            // Suma el subtotal del detalle al monto total
+            montoTotal += detalle.getSubtotal();
+
+            // Guarda el detalle en la base de datos
+            detallePedRepository.save(detalle);
+        }
+
+        return montoTotal;
+    }
+
+
+    @Transactional
+    public Pedido confirmarPedido(Long pedidoId) {
+        Pedido pedido = obtenerPedidoPorId(pedidoId);
+
+        if (!pedido.getEstado().equals("pendiente")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El pedido ya fue procesado");
+        }
+
+        for (Detalle_Pedido detalle : pedido.getDetalle()) {
+            Inventario inventario = detalle.getInventario();
+            if (inventario.getStock() < detalle.getCantidad()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Stock insuficiente para el producto: " + inventario.getProducto().getNombre());
+            }
+
+            // Actualizar stock
+            inventario.setStock(inventario.getStock() - detalle.getCantidad());
+            inventarioRepository.save(inventario);
+        }
+        return pedido;
+    }
+
+
+    private Detalle_Pedido crearDetallePedido(Detalle_Pedido detalle, Pedido pedido, Producto prod, Usuario user) {
+        detalle.setPedido(pedido);  // Asocia el detalle al pedido correspondiente
+        detalle.setProducto(prod);  // Asocia el detalle al producto correspondiente
+
+        // Calcula el subtotal del detalle
+        float subtotal = detalle.getCantidad() * detalle.getPrecioUnitario();
+
+        // Aplica promociones si corresponde
+        Promocion promocion = prod.getPromocion();
+        if (promocion != null && promocion.isActivo() &&
+                (promocion.getSuscripcion().getNombre().equals(user.getSuscripcion().getNombre()) ||
+                        promocion.getSuscripcion().getNombre().equals("STANDAR"))) {
+            subtotal -= subtotal * (promocion.getDescuento() / 100);
+        }
+
+        // Establece el subtotal calculado
+        detalle.setSubtotal(subtotal);
+
+        return detalle;
+    }
+
+
+    private float aplicarDescuentoPorSuscripcion(float montoTotal, Usuario user) {
+        if (!user.getSuscripcion().getNombre().equals("STANDAR")) {
+            return montoTotal - (montoTotal * user.getSuscripcion().getDescuento() / 100);
+        }
+        return montoTotal;
     }
 }

@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BeneficiosDTO {
-    private Long id;
-
-    private Long idPromo;
-
-    private Long idSuscripcion;
-    private int descuento;
+public class InventarioDTO {
+    private int stock;
+    private Long productoId;
+    private Long SucursalId;
+    private Long tallaId;
+    private Long colorId;
 }

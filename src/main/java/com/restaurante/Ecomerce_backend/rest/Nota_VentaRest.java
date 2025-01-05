@@ -1,10 +1,7 @@
 package com.restaurante.Ecomerce_backend.rest;
 
 import com.restaurante.Ecomerce_backend.dto.Nota_VentaDTO;
-import com.restaurante.Ecomerce_backend.model.Nota_venta;
-import com.restaurante.Ecomerce_backend.model.Producto;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
-import com.restaurante.Ecomerce_backend.service.Nota_VentaService;
 import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,10 +18,10 @@ public class Nota_VentaRest {
     private Nota_VentaService nota_ventaService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Nota_venta>>> listarNotas() {
-        List<Nota_venta> nota = nota_ventaService.listNota_venta();
+    public ResponseEntity<ApiResponse<List<Factura>>> listarNotas() {
+        List<Factura> nota = nota_ventaService.listNota_venta();
         return new ResponseEntity<>(
-                ApiResponse.<List<Nota_venta>>builder()
+                ApiResponse.<List<Factura>>builder()
                         .statusCode(HttpStatus.OK.value())
                         .message(HttpStatusMessage.getMessage(HttpStatus.OK))
                         .data(nota)
@@ -34,10 +31,10 @@ public class Nota_VentaRest {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Nota_venta>> obtenerNota(@PathVariable Long id) {
-        Nota_venta notaVenta = nota_ventaService.obtenerNotaPorId(id);
+    public ResponseEntity<ApiResponse<Factura>> obtenerNota(@PathVariable Long id) {
+        Factura notaVenta = nota_ventaService.obtenerNotaPorId(id);
         return new ResponseEntity<>(
-                ApiResponse.<Nota_venta>builder()
+                ApiResponse.<Factura>builder()
                         .statusCode(HttpStatus.OK.value())
                         .message(HttpStatusMessage.getMessage(HttpStatus.OK))
                         .data(notaVenta)
@@ -47,10 +44,10 @@ public class Nota_VentaRest {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Nota_venta>> crearNota(@RequestBody Nota_VentaDTO nota_venta) {
-        Nota_venta nuevoNota = nota_ventaService.crearNota(nota_venta);
+    public ResponseEntity<ApiResponse<Factura>> crearNota(@RequestBody Nota_VentaDTO nota_venta) {
+        Factura nuevoNota = nota_ventaService.crearNota(nota_venta);
         return new ResponseEntity<>(
-                ApiResponse.<Nota_venta>builder()
+                ApiResponse.<Factura>builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message(HttpStatusMessage.getMessage(HttpStatus.CREATED))
                         .data(nuevoNota)
@@ -60,10 +57,10 @@ public class Nota_VentaRest {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Nota_venta>> actualizarNota(@PathVariable Long id, @RequestBody Nota_VentaDTO nota_venta) {
-        Nota_venta notaActualizado = nota_ventaService.actualizarNota(id,nota_venta);
+    public ResponseEntity<ApiResponse<Factura>> actualizarNota(@PathVariable Long id, @RequestBody Nota_VentaDTO nota_venta) {
+        Factura notaActualizado = nota_ventaService.actualizarNota(id,nota_venta);
         return new ResponseEntity<>(
-                ApiResponse.<Nota_venta>builder()
+                ApiResponse.<Factura>builder()
                         .statusCode(HttpStatus.OK.value())
                         .message(HttpStatusMessage.getMessage(HttpStatus.OK))
                         .data(notaActualizado)

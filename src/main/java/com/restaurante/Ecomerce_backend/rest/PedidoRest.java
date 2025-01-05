@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pedido")  // Prefijo 'api' para seguir la convención
+@RequestMapping("/api/pedido")
 public class PedidoRest {
 
     @Autowired
@@ -31,6 +31,12 @@ public class PedidoRest {
                         .build(),
                 HttpStatus.OK
         );
+    }
+
+    @PutMapping("/{pedidoId}/confirmar")
+    public ResponseEntity<Pedido> confirmarPedido(@PathVariable Long pedidoId) {
+        Pedido pedidoConfirmado = pedidoService.confirmarPedido(pedidoId);
+        return ResponseEntity.ok(pedidoConfirmado);
     }
 
     // Obtener un pedido por ID

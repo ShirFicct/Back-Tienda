@@ -1,5 +1,6 @@
 package com.restaurante.Ecomerce_backend.rest;
 
+import com.restaurante.Ecomerce_backend.dto.PromocionDTO;
 import com.restaurante.Ecomerce_backend.model.Promocion;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
 import com.restaurante.Ecomerce_backend.service.PromocionService;
@@ -48,7 +49,7 @@ public class PromocionRest {
 
     // Crear una nueva promoción
     @PostMapping
-    public ResponseEntity<ApiResponse<Promocion>> crearPromocion(@RequestBody Promocion promocion) {
+    public ResponseEntity<ApiResponse<Promocion>> crearPromocion(@RequestBody PromocionDTO promocion) {
         Promocion nuevaPromocion = promocionService.crearPromocion(promocion);
         return new ResponseEntity<>(
                 ApiResponse.<Promocion>builder()
@@ -62,7 +63,7 @@ public class PromocionRest {
 
     // Actualizar una promoción
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Promocion>> actualizarPromocion(@PathVariable Long id, @RequestBody Promocion promocionDetalles) {
+    public ResponseEntity<ApiResponse<Promocion>> actualizarPromocion(@PathVariable Long id, @RequestBody PromocionDTO promocionDetalles) {
         Promocion promocionActualizada = promocionService.actualizarPromocion(id, promocionDetalles);
         return new ResponseEntity<>(
                 ApiResponse.<Promocion>builder()

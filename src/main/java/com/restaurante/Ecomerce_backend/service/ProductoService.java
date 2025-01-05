@@ -1,10 +1,8 @@
 package com.restaurante.Ecomerce_backend.service;
 
 import com.restaurante.Ecomerce_backend.dto.ProductoDTO;
-import com.restaurante.Ecomerce_backend.model.Producto;
-import com.restaurante.Ecomerce_backend.model.Subcategoria;
-import com.restaurante.Ecomerce_backend.model.Temporada;
-import com.restaurante.Ecomerce_backend.model.Usuario;
+import com.restaurante.Ecomerce_backend.model.*;
+import com.restaurante.Ecomerce_backend.repositorios.MarcaRepository;
 import com.restaurante.Ecomerce_backend.repositorios.ProductoRepository;
 import com.restaurante.Ecomerce_backend.repositorios.SubCategoriaRepository;
 import com.restaurante.Ecomerce_backend.repositorios.TemporadaRepository;
@@ -29,7 +27,13 @@ public class ProductoService {
     @Autowired
     private SubCategoriaService subCategoriaService;
     @Autowired
+    private MarcaService marcaService;
+    @Autowired
     private SubCategoriaRepository subCategoriaRepository;
+    @Autowired
+    private MarcaRepository marcaRepository;
+    @Autowired
+    private PromocionService promocionService;
 
     // Listar todos los productos
     public List<Producto> listProductos() {
@@ -42,32 +46,57 @@ public class ProductoService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
     }
 
+    public List<Producto> getProductosBySubcategoria(Long subcategoriaId) {
+        // Validación: Verificar si la subcategoría existe
+        Subcategoria subcategoria = subCategoriaRepository.findById(subcategoriaId)
+                .orElseThrow(() -> new IllegalArgumentException("Subcategoría no encontrada"));
+
+        return productoRepository.findBySubcategoria_Id(subcategoria.getId());
+    }
+
+    public List<Producto> getProductosByTemporada(Long temporadaId) {
+        // Validación: Verificar si la temporada existe
+        Temporada temporada = temporadaRepository.findById(temporadaId)
+                .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
+
+        return productoRepository.findByTemporada_Id(temporada.getId());
+    }
+
+    public List<Producto> getProductosByMarca(Long marcaId) {
+        // Validación: Verificar si la temporada existe
+        Marca marca = marcaRepository.findById(marcaId)
+                .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
+
+        return productoRepository.findByMarca_Id(marca.getId());
+    }
+
+
     // Crear un nuevo producto
     public Producto crearProducto(ProductoDTO productoDTO) {
-        if(productoDTO==null)
-        {
+        if (productoDTO == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no puede ser nula");
         }
         Subcategoria subcategoria = subCategoriaService.obtenerSubCatId(productoDTO.getIdSubcategoria());
         if (subcategoria == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Subcategoria no encontrado");
         }
+        Promocion promocion=promocionService.obtPromocionId(productoDTO.getIdPromocion());
 
-       Temporada temporada = temporadaService.obtTemporadaId(productoDTO.getIdTemporada());
+        Temporada temporada = temporadaService.obtenerTemporadaPorId(productoDTO.getIdTemporada());
         if (temporada == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Temporada no encontrado");
         }
+        Marca marca = marcaService.obtMarcaById(productoDTO.getId_marca());
         Producto nuevoProducto = new Producto();
+        nuevoProducto.setCodProducto(productoDTO.getCodProducto());
         nuevoProducto.setNombre(productoDTO.getNombre());
         nuevoProducto.setPrecio(productoDTO.getPrecio());
         nuevoProducto.setDescripcion(productoDTO.getDescripcion());
-        nuevoProducto.setColor(productoDTO.getColor());
-        nuevoProducto.setTalla(productoDTO.getTalla());
-        nuevoProducto.setMarca(productoDTO.getMarca());
-        nuevoProducto.setStock(productoDTO.getStock());
-        nuevoProducto.setImagen(productoDTO.getImagen());
+        nuevoProducto.setMarca(marca);
+        nuevoProducto.setImagenes(productoDTO.getImagenes());
         nuevoProducto.setSubcategoria(subcategoria);
         nuevoProducto.setTemporada(temporada);
+        nuevoProducto.setPromocion(promocion);
         return productoRepository.save(nuevoProducto);
 
     }
@@ -75,32 +104,31 @@ public class ProductoService {
     // Actualizar un producto
     public Producto actualizarProducto(Long id, ProductoDTO productoDetalles) {
         Producto producto = obtenerProductoPorId(id);
-        if(producto==null){
+        if (producto == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado");
         }
-        Temporada temporada=temporadaRepository.findById(productoDetalles.getIdTemporada())
-                .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "La temporada no fue encontrado"));
+        Temporada temporada = temporadaRepository.findById(productoDetalles.getIdTemporada())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "La temporada no fue encontrado"));
+        Subcategoria subcategoria = subCategoriaService.obtenerSubCatId(productoDetalles.getIdSubcategoria());
+        Marca marca = marcaService.obtMarcaById(productoDetalles.getId_marca());
+        Promocion promocion=promocionService.obtPromocionId(productoDetalles.getIdPromocion());
 
-Optional<Subcategoria> subcategoria= Optional.ofNullable(subCategoriaRepository.findById(productoDetalles.getIdSubcategoria())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "La subcategoria no fue encontrado")));
-
-producto.setSubcategoria(subcategoria.get());
-producto.setTemporada(temporada);
-
+        producto.setSubcategoria(subcategoria);
+        producto.setTemporada(temporada);
         producto.setNombre(productoDetalles.getNombre());
+        producto.setCodProducto(productoDetalles.getCodProducto());
         producto.setDescripcion(productoDetalles.getDescripcion());
-        producto.setMarca(productoDetalles.getMarca());
+        producto.setMarca(marca);
         producto.setPrecio(productoDetalles.getPrecio());
-        producto.setTalla(productoDetalles.getTalla());
-        producto.setColor(productoDetalles.getColor());
-        producto.setImagen(productoDetalles.getImagen());
-        producto.setStock(productoDetalles.getStock());
+        producto.setPromocion(promocion);
+        producto.setImagenes(productoDetalles.getImagenes());
         return productoRepository.save(producto);
     }
 
     // Eliminar un producto
     public void eliminarProducto(Long id) {
         Producto producto = obtenerProductoPorId(id);
-        productoRepository.delete(producto);
+        producto.setActivo(false);
+        productoRepository.save(producto);
     }
 }

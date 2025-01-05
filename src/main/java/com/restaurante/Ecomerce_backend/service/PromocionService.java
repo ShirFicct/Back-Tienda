@@ -1,6 +1,8 @@
 package com.restaurante.Ecomerce_backend.service;
 
+import com.restaurante.Ecomerce_backend.dto.PromocionDTO;
 import com.restaurante.Ecomerce_backend.model.Promocion;
+import com.restaurante.Ecomerce_backend.model.Suscripcion;
 import com.restaurante.Ecomerce_backend.repositorios.PromocionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +16,10 @@ public class PromocionService {
 
 @Autowired
     private PromocionRepository promocionRepository;
+    @Autowired
+    private SuscripcionService suscripcionService;
 
-public List<Promocion> listPromo(){
+    public List<Promocion> listPromo(){
     return promocionRepository.findAll();
 }
 
@@ -25,21 +29,37 @@ public Promocion obtPromocionId (Long id){
 
 }
 
- public Promocion crearPromocion (Promocion promocion){
-    return promocionRepository.save(promocion);
+ public Promocion crearPromocion (PromocionDTO promocion){
+    Suscripcion suscripcion = suscripcionService.obtSuscripcionById(promocion.getSuscripcion());
+    Promocion promo=new Promocion();
+    promo.setNombre(promocion.getNombre());
+    promo.setDescripcion(promocion.getDescripcion());
+    promo.setDescuento(promocion.getDescuento());
+    promo.setActivo(true);
+    promo.setFecha_Inicio(promocion.getFecha_Inicio());
+    promo.setFecha_Fin(promocion.getFecha_Fin());
+    promo.setSuscripcion(suscripcion);
+    return promocionRepository.save(promo);
  }
 
- public  Promocion actualizarPromocion (Long id, Promocion promocion){
-    Promocion promoExist= obtPromocionId(promocion.getId());
+ public  Promocion actualizarPromocion (Long id, PromocionDTO promocion){
+     Suscripcion suscripcion = suscripcionService.obtSuscripcionById(promocion.getSuscripcion());
+
+     Promocion promoExist= obtPromocionId(id);
     promoExist.setNombre(promocion.getNombre());
     promoExist.setDescripcion(promocion.getDescripcion());
+    promoExist.setDescuento(promocion.getDescuento());
+    promoExist.setFecha_Inicio(promocion.getFecha_Inicio());
+    promoExist.setFecha_Fin(promocion.getFecha_Fin());
+    promoExist.setSuscripcion(suscripcion);
 
     return promocionRepository.save(promoExist);
  }
 
  public void eliminarPromocion (Long id){
     Promocion promocion= obtPromocionId(id);
-    promocionRepository.delete(promocion);
+    promocion.setActivo(false);
+    promocionRepository.save(promocion);
  }
 
 

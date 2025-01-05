@@ -1,10 +1,7 @@
 package com.restaurante.Ecomerce_backend.rest;
 
-import com.restaurante.Ecomerce_backend.dto.ProductoPromoDTO;
-import com.restaurante.Ecomerce_backend.model.ProductoPromo;
+import com.restaurante.Ecomerce_backend.dto.PromocionDTO;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
-import com.restaurante.Ecomerce_backend.service.ProdPromoService;
-import com.restaurante.Ecomerce_backend.service.ProductoService;
 import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,8 +47,8 @@ public class ProductoPromoRest {
 
     // Crear una nueva promoción de producto
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductoPromo>> crearProductoPromo(@RequestBody ProductoPromoDTO productoPromoDTO) {
-        ProductoPromo nuevoProductoPromo = prodPromoService.crearProductoPromo(productoPromoDTO);
+    public ResponseEntity<ApiResponse<ProductoPromo>> crearProductoPromo(@RequestBody PromocionDTO promocionDTO) {
+        ProductoPromo nuevoProductoPromo = prodPromoService.crearProductoPromo(promocionDTO);
         return new ResponseEntity<>(
                 ApiResponse.<ProductoPromo>builder()
                         .statusCode(HttpStatus.CREATED.value())
@@ -64,8 +61,8 @@ public class ProductoPromoRest {
 
     // Actualizar una promoción de producto
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductoPromo>> actualizarProductoPromo(@PathVariable Long id, @RequestBody ProductoPromoDTO productoPromoDTO) {
-        ProductoPromo productoPromoActualizado = prodPromoService.modificarProductoPromo(id, productoPromoDTO);
+    public ResponseEntity<ApiResponse<ProductoPromo>> actualizarProductoPromo(@PathVariable Long id, @RequestBody PromocionDTO promocionDTO) {
+        ProductoPromo productoPromoActualizado = prodPromoService.modificarProductoPromo(id, promocionDTO);
         return new ResponseEntity<>(
                 ApiResponse.<ProductoPromo>builder()
                         .statusCode(HttpStatus.OK.value())

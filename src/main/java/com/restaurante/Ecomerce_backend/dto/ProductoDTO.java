@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,21 +18,12 @@ public class ProductoDTO {
     private String nombre;
 
     private String descripcion;
-
-    private String marca;
-
-    private String talla;
-
-    private String color;
-
-    private String imagen;
-
-    @NotNull(message = "El stock no puede ser nulo")
-    private Long stock;
-
+    private List<String> imagenes;
     @NotNull(message = "El precio no puede ser nulo")
     private float precio;
 
+    private Long id_marca;
     private Long idSubcategoria;
     private Long idTemporada;
+    private  Long idPromocion;
 }

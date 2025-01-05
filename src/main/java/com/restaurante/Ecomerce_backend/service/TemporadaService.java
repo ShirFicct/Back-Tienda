@@ -14,25 +14,37 @@ public class TemporadaService {
     @Autowired
     private TemporadaRepository temporadaRepository;
 
-    public List<Temporada> listTemporadas() {
+    // Listar todas las temporadas
+    public List<Temporada> listarTemporadas() {
         return temporadaRepository.findAll();
     }
 
-    public Temporada obtTemporadaId(Long id) {
+    // Obtener una temporada por ID
+    public Temporada obtenerTemporadaPorId(Long id) {
         return temporadaRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Temporada no encontrado"));
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Temporada no encontrada"));
     }
 
-    public Temporada createTemporada(Temporada temporada) {
-        return temporadaRepository.save(temporada);
+    // Crear una nueva temporada
+    public Temporada crearTemporada(Temporada temporada) {
+        Temporada nuevaTemporada = new Temporada();
+        nuevaTemporada.setNombre(temporada.getNombre());
+        nuevaTemporada.setActivo(true);
+        return temporadaRepository.save(nuevaTemporada);
     }
+
+    // Modificar una temporada existente
     public Temporada modificarTemporada(Long id, Temporada temporada) {
-        Temporada temporada1=obtTemporadaId(temporada.getId());
-        temporada1.setNombre(temporada.getNombre());
-        return temporadaRepository.save(temporada1);
+        Temporada temporadaExistente = obtenerTemporadaPorId(id);
+        temporadaExistente.setNombre(temporada.getNombre());
+        temporadaExistente.setActivo(temporada.isActivo());
+        return temporadaRepository.save(temporadaExistente);
     }
 
-    public void eliminarTemporada(Long id) {
-        temporadaRepository.deleteById(id);
+    // Eliminar una temporada (lógica, no física)
+    public Temporada eliminarTemporada(Long id) {
+        Temporada temporada = obtenerTemporadaPorId(id);
+        temporada.setActivo(false);
+        return temporadaRepository.save(temporada);
     }
 }

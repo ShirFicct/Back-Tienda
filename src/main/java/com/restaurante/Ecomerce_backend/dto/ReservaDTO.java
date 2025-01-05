@@ -13,10 +13,11 @@ import java.util.Date;
 public class ReservaDTO {
     private Long id;
     @NotNull(message = "La fecha del pedido no puede ser nula")
-    private Date fecha;
-
-    @NotNull(message = "El estado del pedido no puede ser nulo")
-    private boolean estado;
+    private Date fecha_creacion;
+    private Date fecha_expiracion;
+    private float total;
+    private float abono;
+private String estado;
 
     @NotNull(message = "El usuario no puede ser nulo")
     private Long idUsuario;

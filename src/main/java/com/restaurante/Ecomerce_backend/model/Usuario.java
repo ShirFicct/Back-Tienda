@@ -36,6 +36,7 @@ public class Usuario implements UserDetails, Serializable {
     private String password;
     private String direccion;
     private String telefono;
+    private String Nit;
 
     private boolean activo;
     private boolean cuentaNoExpirada;
@@ -51,10 +52,9 @@ public class Usuario implements UserDetails, Serializable {
     @JsonIgnore
     private Set<Rol> roles;
 
-    @OneToMany(mappedBy = "usuario")
-    @JsonIgnore
-    private Set<UserSuscripcion> userSuscripciones = new HashSet<>();
-
+    @ManyToOne
+    @JoinColumn(name ="id_suscripcion")
+    private Suscripcion suscripcion;
 
     @OneToOne
     @JoinColumn(name = "id_idioma") //foranea
@@ -63,10 +63,16 @@ public class Usuario implements UserDetails, Serializable {
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore  // Evita la serialización de los pedidos en la respuesta JSON
     private List<Pedido> pedidos;
+
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore  // Evita la serialización de los pedidos en la respuesta JSON
+    private List<Reserva> reserva;
+
+
     // Constructor vacío
     public Usuario() {}
 
-    public Usuario(String nombre, String email, String password, Set<Rol> rol) {
+  /* public Usuario(String nombre, String email, String password, Set<Rol> rol) {
         super();
         this.nombre = nombre;
         this.email = email;
@@ -77,7 +83,7 @@ public class Usuario implements UserDetails, Serializable {
         this.cuentaNoBloqueada = true;
         this.credencialesNoExpiradas = true;
     }
-
+*/
     //obtiene los nombres de los roles
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -19,4 +19,5 @@ public class Met_Pago implements Serializable {
     private Long id;
     private String nombre;
 
+    private boolean activo;
 }

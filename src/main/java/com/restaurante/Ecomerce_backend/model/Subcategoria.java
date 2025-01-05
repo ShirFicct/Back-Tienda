@@ -18,6 +18,7 @@ public class Subcategoria implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE) //hac q las tuplas se generen incremental
     private Long id;
     private String nombre;
+    private boolean disponible;
 
     @ManyToOne
     @JoinColumn(name ="id_categoria")

@@ -3,6 +3,7 @@ package com.restaurante.Ecomerce_backend.rest;
 import com.restaurante.Ecomerce_backend.dto.UsuarioDTO;
 import com.restaurante.Ecomerce_backend.model.Usuario;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
+import com.restaurante.Ecomerce_backend.response.AuthResponse;
 import com.restaurante.Ecomerce_backend.service.UsuarioService;
 import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
 import jakarta.validation.Valid;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,7 +83,7 @@ public class UsuarioRest {
 		);
 	}
 
-	@DeleteMapping("/{id}")
+	@PatchMapping("/{id}/desactivar")
 	public ResponseEntity<ApiResponse<Void>> eliminarUsuario(@PathVariable Long id) {
 		usuarioService.deleteUser(id);
 		return new ResponseEntity<>(
@@ -92,7 +95,7 @@ public class UsuarioRest {
 		);
 	}
 
-	@PostMapping("/{id}")
+	@PatchMapping("/{id}/activar")
 	public ResponseEntity<ApiResponse<Void>> activarUsuario(@PathVariable Long id) {
 		usuarioService.activeUser(id);
 		return new ResponseEntity<>(
@@ -103,4 +106,11 @@ public class UsuarioRest {
 				HttpStatus.OK
 		);
 	}
+
+	@GetMapping("/me")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<AuthResponse> getCurrentUser(Authentication authentication) {
+		return ResponseEntity.ok(usuarioService.loader(authentication));
+	}
+
 }
