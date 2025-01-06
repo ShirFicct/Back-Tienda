@@ -7,12 +7,13 @@ import com.restaurante.Ecomerce_backend.util.HttpStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/sucursal")  // Prefijo 'api' para endpoints
+@RequestMapping("/sucursal")  // Prefijo 'api' para endpoints
 public class SucursalRest {
 
     @Autowired
@@ -48,6 +49,7 @@ public class SucursalRest {
 
     // Crear una nueva sucursal
     @PostMapping
+    @PreAuthorize("hasAuthority('PERMISO_ADMINISTRAR_SUCURSALES')")
     public ResponseEntity<ApiResponse<Sucursal>> crearSucursal(@RequestBody Sucursal sucursal) {
         Sucursal nuevaSucursal = sucursalService.crearSucursal(sucursal);
         return new ResponseEntity<>(
@@ -61,7 +63,8 @@ public class SucursalRest {
     }
 
     // Actualizar una sucursal
-    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('PERMISO_ADMINISTRAR_SUCURSALES')")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Sucursal>> actualizarSucursal(@PathVariable Long id, @RequestBody Sucursal sucursalDetalles) {
         Sucursal sucursalActualizada = sucursalService.actualizarSucursal(id, sucursalDetalles);
         return new ResponseEntity<>(
@@ -74,8 +77,9 @@ public class SucursalRest {
         );
     }
 
-    /*// Eliminar una sucursal
+
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('PERMISO_ADMINISTRAR_SUCURSALES')")
     public ResponseEntity<ApiResponse<Void>> eliminarSucursal(@PathVariable Long id) {
         sucursalService.eliminarSucursal(id);
         return new ResponseEntity<>(
@@ -85,5 +89,5 @@ public class SucursalRest {
                         .build(),
                 HttpStatus.NO_CONTENT
         );
-    }*/
+    }
 }

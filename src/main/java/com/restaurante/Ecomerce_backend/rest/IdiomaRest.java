@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/idioma")  // Prefijo 'api' para los endpoints
+@RequestMapping("/idioma")
 public class IdiomaRest {
 
     @Autowired
@@ -61,7 +61,7 @@ public class IdiomaRest {
     }
 
     // Actualizar un idioma
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Idioma>> actualizarIdioma(@PathVariable Long id, @RequestBody Idioma idiomaDetalles) {
         Idioma idiomaActualizado = idiomaService.actualizarIdioma(id, idiomaDetalles);
         return new ResponseEntity<>(

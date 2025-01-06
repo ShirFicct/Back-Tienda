@@ -25,6 +25,12 @@ public class SuscripcionService {
     }
 
     public Suscripcion crearSuscripcion(Suscripcion suscripcion) {
+        Suscripcion newSuscripcion = new Suscripcion();
+        newSuscripcion.setNombre(suscripcion.getNombre());
+        newSuscripcion.setDescripcion(suscripcion.getDescripcion());
+        newSuscripcion.setPrecio(suscripcion.getPrecio());
+        newSuscripcion.setEstado(true);
+        newSuscripcion.setDescuento(suscripcion.getDescuento());
         return suscripcionRepository.save(suscripcion);
     }
 
@@ -33,13 +39,14 @@ public class SuscripcionService {
         suscripcion1.setNombre(suscripcion.getNombre());
         suscripcion1.setDescripcion(suscripcion.getDescripcion());
         suscripcion1.setPrecio(suscripcion.getPrecio());
-        suscripcion1.setEstado(suscripcion.isEstado());
+        suscripcion1.setDescuento(suscripcion.getDescuento());
         return suscripcionRepository.save(suscripcion1);
 
     }
 
     public void eliminarSuscripcion(Long id) {
         Suscripcion suscripcion = obtSuscripcionById(id);
-        suscripcionRepository.delete(suscripcion);
+        suscripcion.setEstado(false);
+        suscripcionRepository.save(suscripcion);
     }
 }

@@ -14,7 +14,6 @@ public class TemporadaService {
     @Autowired
     private TemporadaRepository temporadaRepository;
 
-    // Listar todas las temporadas
     public List<Temporada> listarTemporadas() {
         return temporadaRepository.findAll();
     }
@@ -25,7 +24,6 @@ public class TemporadaService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Temporada no encontrada"));
     }
 
-    // Crear una nueva temporada
     public Temporada crearTemporada(Temporada temporada) {
         Temporada nuevaTemporada = new Temporada();
         nuevaTemporada.setNombre(temporada.getNombre());
@@ -33,7 +31,6 @@ public class TemporadaService {
         return temporadaRepository.save(nuevaTemporada);
     }
 
-    // Modificar una temporada existente
     public Temporada modificarTemporada(Long id, Temporada temporada) {
         Temporada temporadaExistente = obtenerTemporadaPorId(id);
         temporadaExistente.setNombre(temporada.getNombre());
@@ -41,7 +38,6 @@ public class TemporadaService {
         return temporadaRepository.save(temporadaExistente);
     }
 
-    // Eliminar una temporada (lógica, no física)
     public Temporada eliminarTemporada(Long id) {
         Temporada temporada = obtenerTemporadaPorId(id);
         temporada.setActivo(false);

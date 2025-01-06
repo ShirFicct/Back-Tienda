@@ -1,11 +1,9 @@
 package com.restaurante.Ecomerce_backend.service;
 
 import com.restaurante.Ecomerce_backend.dto.UsuarioDTO;
-import com.restaurante.Ecomerce_backend.model.Idioma;
-import com.restaurante.Ecomerce_backend.model.Rol;
-import com.restaurante.Ecomerce_backend.model.Suscripcion;
-import com.restaurante.Ecomerce_backend.model.Usuario;
+import com.restaurante.Ecomerce_backend.model.*;
 import com.restaurante.Ecomerce_backend.repositorios.RolRepository;
+import com.restaurante.Ecomerce_backend.repositorios.SuscripcionRepository;
 import com.restaurante.Ecomerce_backend.repositorios.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -57,6 +55,8 @@ public class UsuarioService {
 
     @Autowired
     private IdiomaService idiomaService;
+    @Autowired
+    private SuscripcionRepository suscripcionRepository;
 
     public List<UsuarioDTO> listUser() {
         List<Usuario> user = usuarioRepository.findAll();
@@ -69,7 +69,14 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public Long getUsuariorById(String name) {
+    public List<Usuario> obtUserBySus(Long susId) {
+
+        Suscripcion SUS = suscripcionRepository.findById(susId)
+                .orElseThrow(() -> new IllegalArgumentException("Suscripcion no encontrada"));
+
+        return usuarioRepository.findBySuscripcionId(susId);
+    }
+    public Long getUsuariorByname(String name) {
         Usuario usuario = usuarioRepository.findByEmail(name)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return usuario.getId();
@@ -113,9 +120,10 @@ public class UsuarioService {
         usuario.setNombre(userDto.getNombre());
                 usuario.setEmail(userDto.getEmail());
                 usuario.setDireccion(userDto.getDireccion());
+        usuario.setTelefono(userDto.getTelefono());
                 usuario.setNit(userDto.getNit());
                 usuario.setIdioma(idioma);
-                usuario.setTelefono(userDto.getTelefono());
+
                 usuario.setPassword(passwordEncoder.encode(userDto.getPassword())) ;
                 usuario.setRoles(rolesSet);
                 usuario.setSuscripcion(suscripcio);

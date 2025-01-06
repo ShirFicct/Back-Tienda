@@ -26,6 +26,18 @@ public class Detalle_reseva {
     @ManyToOne
     @JoinColumn(name = "id_reserva",nullable = false)
     private Reserva reserva;
+
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id")
+    private Sucursal sucursal;
+
+    @ManyToOne
+    @JoinColumn(name = "talla_id")
+    private Talla talla;
+
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    private Color color;
 }
 
 

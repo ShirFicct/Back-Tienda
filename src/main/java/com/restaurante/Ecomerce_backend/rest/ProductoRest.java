@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/producto") //
+@RequestMapping("/producto") //
 public class ProductoRest {
 
     @Autowired
@@ -33,7 +33,7 @@ public class ProductoRest {
         );
     }
 
-    @GetMapping("/productos/temporada/{temporadaId}")
+    @GetMapping("/temporada/{temporadaId}")
     public ResponseEntity<ApiResponse<List<Producto>>> listarProductoByTemporada(@PathVariable Long id) {
         List<Producto> productos = productoService.getProductosByTemporada(id);
         return new ResponseEntity<>(
@@ -46,7 +46,7 @@ public class ProductoRest {
         );
     }
 
-    @GetMapping("/productos/subcategoria/{subcategoriaId}")
+    @GetMapping("/subcategoria/{subcategoriaId}")
     public ResponseEntity<ApiResponse<List<Producto>>> listarProductoBySubCategoria(@PathVariable Long id) {
         List<Producto> productos = productoService.getProductosBySubcategoria(id);
         return new ResponseEntity<>(
@@ -59,9 +59,22 @@ public class ProductoRest {
         );
     }
 
-    @GetMapping("/productos/marca/{marcaId}")
+    @GetMapping("/marca/{marcaId}")
     public ResponseEntity<ApiResponse<List<Producto>>> listarProductoByMARCA(@PathVariable Long id) {
         List<Producto> productos = productoService.getProductosByMarca(id);
+        return new ResponseEntity<>(
+                ApiResponse.<List<Producto>>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(productos)
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/promocion/{promoId}")
+    public ResponseEntity<ApiResponse<List<Producto>>> listarProductoByPROMO(@PathVariable Long id) {
+        List<Producto> productos = productoService.getProductosByPromocion(id);
         return new ResponseEntity<>(
                 ApiResponse.<List<Producto>>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -101,7 +114,7 @@ public class ProductoRest {
     }
 
     // Actualizar un producto
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Producto>> actualizarProducto(@PathVariable Long id, @RequestBody ProductoDTO productoDetalles) {
         Producto productoActualizado = productoService.actualizarProducto(id, productoDetalles);
         return new ResponseEntity<>(

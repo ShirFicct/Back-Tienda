@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subcategoria")  // Prefijo 'api' para endpoints
+@RequestMapping("subcategoria")  // Prefijo 'api' para endpoints
 public class SubCategoriaRest {
 
     @Autowired
@@ -63,7 +63,7 @@ public class SubCategoriaRest {
     }
 
     // Actualizar una subcategoría
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Subcategoria>> actualizarSubcategoria(@PathVariable Long id, @RequestBody SubcategoriaDTO subcategoriaDetalles) {
         Subcategoria subcategoriaActualizada = subcategoriaService.actualizarSubCat(id, subcategoriaDetalles);
         return new ResponseEntity<>(

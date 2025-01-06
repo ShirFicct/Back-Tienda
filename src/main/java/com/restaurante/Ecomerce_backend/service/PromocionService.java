@@ -4,6 +4,7 @@ import com.restaurante.Ecomerce_backend.dto.PromocionDTO;
 import com.restaurante.Ecomerce_backend.model.Promocion;
 import com.restaurante.Ecomerce_backend.model.Suscripcion;
 import com.restaurante.Ecomerce_backend.repositorios.PromocionRepository;
+import com.restaurante.Ecomerce_backend.repositorios.SuscripcionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class PromocionService {
     private PromocionRepository promocionRepository;
     @Autowired
     private SuscripcionService suscripcionService;
+    @Autowired
+    private SuscripcionRepository suscripcionRepository;
 
     public List<Promocion> listPromo(){
     return promocionRepository.findAll();
@@ -29,6 +32,12 @@ public Promocion obtPromocionId (Long id){
 
 }
 
+public List<Promocion>getPromoBySuscr(Long id)
+{
+    Suscripcion suscripcion=suscripcionRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
+return promocionRepository.findBySuscripcionId(suscripcion.getId());
+}
  public Promocion crearPromocion (PromocionDTO promocion){
     Suscripcion suscripcion = suscripcionService.obtSuscripcionById(promocion.getSuscripcion());
     Promocion promo=new Promocion();

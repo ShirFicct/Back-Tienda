@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/suscripcion")  // Prefijo 'api' para endpoints
+@RequestMapping("/suscripcion")  // Prefijo 'api' para endpoints
 public class SuscripcionRest {
 
     @Autowired

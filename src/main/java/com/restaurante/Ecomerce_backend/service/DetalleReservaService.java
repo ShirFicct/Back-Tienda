@@ -5,6 +5,8 @@ import com.restaurante.Ecomerce_backend.dto.DetalleReservaDTO;
 import com.restaurante.Ecomerce_backend.model.*;
 import com.restaurante.Ecomerce_backend.repositorios.DetalleReserRepository;
 import com.restaurante.Ecomerce_backend.repositorios.InventarioRepository;
+import com.restaurante.Ecomerce_backend.repositorios.ProductoRepository;
+import com.restaurante.Ecomerce_backend.repositorios.ReservaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,9 @@ public class DetalleReservaService {
     private DetalleReserRepository detalleReserRepository;
 
     @Autowired
-    private ProductoService productoService;
-
+    private ProductoRepository productoRepository;
     @Autowired
-    private ReservaService reservaService;
+    private ReservaRepository reservaRepository;
 
     @Autowired
     private InventarioRepository inventarioRepository;
@@ -36,37 +37,35 @@ public class DetalleReservaService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "no encontrado"));
     }
 
-    // Ejemplo dentro de DetalleReservaService:
 
     @Transactional
     public Detalle_reseva crear(DetalleReservaDTO dto) {
-        // 1. Obtén el producto
-        Producto prod = productoService.obtenerProductoPorId(dto.getIdProducto());
-        if (prod == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado");
-        }
+        // 1. Buscar el producto directamente con productoRepository
+        Producto prod = productoRepository.findById(dto.getIdProducto())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Producto no encontrado"));
 
-        // 2. Obtén la reserva
-        Reserva res = reservaService.obtenerReservaPorId(dto.getIdReserva());
-        if (res == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reserva no encontrada");
-        }
+        // 2. Buscar la reserva directamente con reservaRepository
+        Reserva res = reservaRepository.findById(dto.getIdReserva())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Reserva no encontrada"));
 
         // 3. Identifica el inventario correcto
-        //   (Sucede que en tu InventarioRepository tienes un método 'findByProductoIdAndSucursalIdAndTallaIdAndColorId')
+        //    (ya usas inventarioRepository)
         Inventario inventario = inventarioRepository.findByProductoIdAndSucursalIdAndTallaIdAndColorId(
                 dto.getIdProducto(),
                 dto.getSucursalId(),
                 dto.getTallaId(),
                 dto.getColorId()
-        ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventario no encontrado"));
+        ).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Inventario no encontrado"));
 
         // 4. Chequea stock
         if (inventario.getStock() < dto.getCantidad()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Stock insuficiente");
         }
 
-        // 5. Descuenta stock de inmediato
+        // 5. Descuenta stock
         inventario.setStock(inventario.getStock() - dto.getCantidad());
         inventarioRepository.save(inventario);
 
@@ -77,16 +76,18 @@ public class DetalleReservaService {
         detalle.setEstado(true);
         detalle.setCantidad(dto.getCantidad());
         detalle.setPrecioUnitario(dto.getPrecioUnitario());
+
         float subtotal = dto.getPrecioUnitario() * dto.getCantidad();
         detalle.setSubtotal(subtotal);
 
         // 7. Guarda el detalle
         Detalle_reseva detalleGuardado = detalleReserRepository.save(detalle);
 
-        // 8. Suma subtotal al total de la reserva
+        // 8. Suma subtotal al total de la reserva y guarda cambios
         float nuevoTotal = res.getTotal() + subtotal;
         res.setTotal(nuevoTotal);
-        reservaService.guardarCambios(res);
+        // en lugar de reservaService.guardarCambios(res), puedes usar reserveRepository.save(res)
+        reservaRepository.save(res);
 
         return detalleGuardado;
     }
@@ -100,7 +101,9 @@ public class DetalleReservaService {
 
     }
 
-
+    public List<Detalle_reseva> findByReservaId(Long reservaId) {
+        return detalleReserRepository.findByReservaId(reservaId);
+    }
 
     public void eliminar(Long id) {
         Detalle_reseva detalle_res = findById(id);

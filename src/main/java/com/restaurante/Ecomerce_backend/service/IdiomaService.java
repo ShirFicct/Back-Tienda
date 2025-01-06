@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 public class IdiomaService {
     @Autowired
     private IdiomaRepository idiomaRepository;
+
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -35,7 +37,9 @@ public class IdiomaService {
 
     // Crear un nuevo producto
     public Idioma crearIdioma(Idioma idioma) {
-
+        Idioma newidioma = new Idioma();
+        newidioma.setNombre(idioma.getNombre());
+        newidioma.setActivo(true);
         return idiomaRepository.save(idioma);
     }
 
@@ -45,9 +49,10 @@ public class IdiomaService {
         return idiomaRepository.save(idioma);
     }
 
-    public void eliminarIdioma(Long id) {
+    public Idioma eliminarIdioma(Long id) {
         Idioma idioma = obtenerIdiomaPorId(id);
-        idiomaRepository.delete(idioma);
+        idioma.setActivo(false);
+        return idiomaRepository.save(idioma);
 
     }
 

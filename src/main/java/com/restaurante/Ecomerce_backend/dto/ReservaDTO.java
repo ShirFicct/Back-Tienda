@@ -21,4 +21,6 @@ private String estado;
 
     @NotNull(message = "El usuario no puede ser nulo")
     private Long idUsuario;
+
+    private Long metPagoId;
 }

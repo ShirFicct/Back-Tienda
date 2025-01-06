@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/temporada")  // Prefijo 'api' para endpoints
+@RequestMapping("/temporada")  // Prefijo 'api' para endpoints
 public class TemporadaRest {
 
     @Autowired
@@ -61,7 +61,7 @@ public class TemporadaRest {
     }
 
     // Actualizar una temporada
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Temporada>> actualizarTemporada(@PathVariable Long id, @RequestBody Temporada temporadaDetalles) {
         Temporada temporadaActualizada = temporadaService.modificarTemporada(id, temporadaDetalles);
         return new ResponseEntity<>(

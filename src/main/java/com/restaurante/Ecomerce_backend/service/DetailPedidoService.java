@@ -22,9 +22,6 @@ public class DetailPedidoService {
     private PedidoRepository pedidoRepository;
 
     @Autowired
-    private PedidoService pedidoService;
-
-    @Autowired
     private ProductoService productoService;
     @Autowired
     private InventarioService inventarioService;
@@ -37,7 +34,7 @@ public class DetailPedidoService {
     public List<Detalle_Pedido> obtByPedido(Long id_pedido) {
         Pedido pedido = pedidoRepository.findById(id_pedido)
                 .orElseThrow(() -> new IllegalArgumentException("pedido no encontrada"));
-        return detallePedido.findByPedidoId(pedido.getNro_pedido());
+        return detallePedido.findByPedidoId(pedido.getId());
 
 
     }
@@ -47,7 +44,10 @@ public class DetailPedidoService {
     }
 
     public Detalle_Pedido crear(DetallePedidoDTO detallePedidoDTO) {
-        Pedido pedido= pedidoService.obtenerPedidoPorId(detallePedidoDTO.getIdPedido());
+        Pedido pedido = pedidoRepository.findById(detallePedidoDTO.getIdPedido())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Pedido no encontrado"));
+
         Producto producto=productoService.obtenerProductoPorId(detallePedidoDTO.getIdProducto());
         Inventario inv= inventarioService.findById(detallePedidoDTO.getIdInventario());
         Detalle_Pedido detalle_Pedido=new Detalle_Pedido();

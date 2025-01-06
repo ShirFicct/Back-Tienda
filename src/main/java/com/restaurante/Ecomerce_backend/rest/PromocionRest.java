@@ -1,6 +1,7 @@
 package com.restaurante.Ecomerce_backend.rest;
 
 import com.restaurante.Ecomerce_backend.dto.PromocionDTO;
+import com.restaurante.Ecomerce_backend.model.Producto;
 import com.restaurante.Ecomerce_backend.model.Promocion;
 import com.restaurante.Ecomerce_backend.response.ApiResponse;
 import com.restaurante.Ecomerce_backend.service.PromocionService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/promocion")  // Prefijo 'api' para los endpoints
+@RequestMapping("/promocion")  // Prefijo 'api' para los endpoints
 public class PromocionRest {
 
     @Autowired
@@ -47,6 +48,19 @@ public class PromocionRest {
         );
     }
 
+    @GetMapping("/suscripcion/{suscripcionId}")
+    public ResponseEntity<ApiResponse<List<Promocion>>> listarProductoBySuscripcion(@PathVariable Long id) {
+        List<Promocion> promocions = promocionService.getPromoBySuscr(id);
+        return new ResponseEntity<>(
+                ApiResponse.<List<Promocion>>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(promocions)
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
     // Crear una nueva promoción
     @PostMapping
     public ResponseEntity<ApiResponse<Promocion>> crearPromocion(@RequestBody PromocionDTO promocion) {
@@ -62,7 +76,7 @@ public class PromocionRest {
     }
 
     // Actualizar una promoción
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Promocion>> actualizarPromocion(@PathVariable Long id, @RequestBody PromocionDTO promocionDetalles) {
         Promocion promocionActualizada = promocionService.actualizarPromocion(id, promocionDetalles);
         return new ResponseEntity<>(

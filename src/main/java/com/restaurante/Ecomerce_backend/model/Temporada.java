@@ -17,7 +17,8 @@ public class Temporada {
     private String nombre;
     private boolean activo;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "temporada")
     private List<Producto> productos;
+
 
 }

@@ -15,6 +15,7 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
+
     public List<Categoria> listCategoria() {
         return categoriaRepository.findAll();
     }
@@ -25,6 +26,10 @@ public class CategoriaService {
     }
 
     public Categoria crearCat(Categoria cat) {
+        Categoria categoria= new Categoria();
+        categoria.setNombre(cat.getNombre());
+        categoria.setDescripcion(cat.getDescripcion());
+        categoria.setDisponible(true);
         return categoriaRepository.save(cat);
     }
 
@@ -36,7 +41,9 @@ public class CategoriaService {
     }
 
     public void eliminarCat(Long id) {
-        categoriaRepository.deleteById(id);
+    Categoria categoria= obtenerCatId(id);
+    categoria.setDisponible(false);
+    categoriaRepository.save(categoria);
     }
 
     }

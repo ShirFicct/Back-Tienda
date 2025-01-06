@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/metodopago")
+@RequestMapping("/metodopago")
 public class Met_pagoRest {
 
     @Autowired
@@ -29,7 +29,7 @@ public class Met_pagoRest {
                 .build(), HttpStatus.OK);
     }
 
-    // Obtener un método de pago por ID
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Met_Pago>> obtenerMetodo(@PathVariable Long id) {
         Met_Pago metodo = met_pagoService.obtMetoPorId(id);
@@ -40,7 +40,7 @@ public class Met_pagoRest {
                 .build(), HttpStatus.OK);
     }
 
-    // Crear un nuevo método de pago
+
     @PostMapping
     public ResponseEntity<ApiResponse<Met_Pago>> crearMetodo(@RequestBody Met_Pago met_pago) {
         Met_Pago nuevoMetodo = met_pagoService.crearMetPago(met_pago);
@@ -51,7 +51,6 @@ public class Met_pagoRest {
                 .build(), HttpStatus.CREATED);
     }
 
-    // Actualizar un método de pago
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Met_Pago>> actualizarMetodo(@PathVariable Long id, @RequestBody Met_Pago met_pagoDetalles) {
         Met_Pago metodoActualizado = met_pagoService.actualizarMetPago(id, met_pagoDetalles);
@@ -62,7 +61,6 @@ public class Met_pagoRest {
                 .build(), HttpStatus.OK);
     }
 
-    /* Eliminar un método de pago
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminarMetodo(@PathVariable Long id) {
         met_pagoService.eliminarMetPago(id);
@@ -70,5 +68,5 @@ public class Met_pagoRest {
                 .statusCode(HttpStatus.NO_CONTENT.value())
                 .message(HttpStatusMessage.getMessage(HttpStatus.NO_CONTENT))
                 .build(), HttpStatus.NO_CONTENT);
-    }*/
+    }
 }

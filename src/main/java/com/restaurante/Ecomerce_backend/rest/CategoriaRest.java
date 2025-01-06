@@ -71,7 +71,7 @@ public class CategoriaRest {
     }
 
     // Actualizar una categoría
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Categoria>> actualizarCategoria(@PathVariable Long id, @RequestBody Categoria categoriaDetalles) {
         try {
             Categoria categoriaActualizada = categoriaService.actualizarCat(id, categoriaDetalles);

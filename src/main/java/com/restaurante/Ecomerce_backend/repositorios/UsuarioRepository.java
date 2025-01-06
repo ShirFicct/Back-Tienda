@@ -21,6 +21,6 @@ public interface UsuarioRepository extends JpaRepository < Usuario,Long>
             "LOWER(c.email) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Usuario> findByNombreOrApellidoOrEmail(@Param("searchTerm") String searchTerm);
 
-
+List<Usuario> findBySuscripcionId(Long suscripcionId);
 
 }

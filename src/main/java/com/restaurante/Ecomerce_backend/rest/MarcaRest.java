@@ -62,7 +62,7 @@ public class MarcaRest {
     }
 
     // Actualizar una marca existente
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Marca>> updateMarca(@PathVariable Long id, @RequestBody Marca marcaDetails) {
         Marca updatedMarca = marcaService.updateMarca(id, marcaDetails);
         return new ResponseEntity<>(

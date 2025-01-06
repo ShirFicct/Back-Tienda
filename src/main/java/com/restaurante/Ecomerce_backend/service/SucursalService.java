@@ -24,6 +24,9 @@ public class SucursalService {
     }
 
     public Sucursal crearSucursal(Sucursal sucursal) {
+        Sucursal sucursa= new Sucursal();
+        sucursa.setNombre(sucursal.getNombre());
+        sucursa.setDireccion( sucursal.getDireccion());
         return sucursalRepository.save(sucursal);
     }
 

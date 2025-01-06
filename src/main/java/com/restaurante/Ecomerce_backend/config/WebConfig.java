@@ -8,10 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer{
-	
-	@Override
+
+    @Override
     public void configurePathMatch(@NonNull PathMatchConfigurer configurer) {
-        configurer.addPathPrefix("/tienda", c -> true);
+        configurer.addPathPrefix("/tienda", c -> !c.getPackageName().startsWith("org.springdoc"));
     }
 
     @Override

@@ -38,7 +38,7 @@ public class SubCategoriaService {
 
     // Crear una nueva subcategoría
     public Subcategoria crearSubCat(SubcategoriaDTO subcategoria) {
-        // Validar que subcategoria no sea nulo (opcional)
+
         if (subcategoria == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Subcategoría no puede ser nula");
 
@@ -47,12 +47,13 @@ public class SubCategoriaService {
 
         Set<Categoria> categorias = new HashSet<>();
         categorias.add(categoria);
-        Subcategoria subcategoriaSubcategoria = new Subcategoria();
-        subcategoriaSubcategoria.setCategoria(categoria);
-        subcategoriaSubcategoria.setNombre(subcategoria.getNombre());
+        Subcategoria subcat = new Subcategoria();
+        subcat.setCategoria(categoria);
+        subcat.setDisponible(true);
+        subcat.setNombre(subcategoria.getNombre());
 
 
-        return subCategoriaRepository.save(subcategoriaSubcategoria);
+        return subCategoriaRepository.save(subcat);
     }
 
     // Actualizar una subcategoría existente
@@ -62,7 +63,7 @@ public class SubCategoriaService {
         if (subcategoria == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La subcategoria no fue encontrada");
         }
-        Categoria categoria= categoriaRepository.findById(subcategoriaDetalles.getIdCategoria()).orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "El pedido no fue encontrado"));
+        Categoria categoria = categoriaRepository.findById(subcategoriaDetalles.getIdCategoria()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El pedido no fue encontrado"));
         subcategoria.setCategoria(categoria);
         subcategoria.setNombre(subcategoriaDetalles.getNombre());
         return subCategoriaRepository.save(subcategoria);
@@ -73,6 +74,9 @@ public class SubCategoriaService {
         if (!subCategoriaRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subcategoría no encontrada");
         }
-        subCategoriaRepository.deleteById(id);
+        Subcategoria subcat = obtenerSubCatId(id);
+        subcat.setDisponible(false);
+        subCategoriaRepository.save(subcat);
+
     }
 }

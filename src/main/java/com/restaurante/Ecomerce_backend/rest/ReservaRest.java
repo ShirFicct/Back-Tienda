@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reserva")
+@RequestMapping("/reserva")
 public class ReservaRest {
 
     @Autowired
@@ -62,7 +62,7 @@ public class ReservaRest {
     }
 
     // Actualizar una reserva
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Reserva>> actualizarReserva(@PathVariable Long id, @RequestBody ReservaDTO reservaDTO) {
         Reserva reservaActualizada = reservaService.modificarReserva(id, reservaDTO);
         return new ResponseEntity<>(
@@ -85,6 +85,34 @@ public class ReservaRest {
                         .message(HttpStatusMessage.getMessage(HttpStatus.NO_CONTENT))
                         .build(),
                 HttpStatus.NO_CONTENT
+        );
+    }
+
+    @PatchMapping("/{reservaId}/completar-pago")
+    public ResponseEntity<ApiResponse<Reserva>> completarPago(
+            @PathVariable Long reservaId,
+            @RequestParam float montoAdicional
+    ) {
+        Reserva reservaCompletada = reservaService.completarPagoReserva(reservaId, montoAdicional);
+        return new ResponseEntity<>(
+                ApiResponse.<Reserva>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data(reservaCompletada)
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+    @PatchMapping("/cancelar-expiradas")
+    public ResponseEntity<ApiResponse<String>> cancelarReservasExpiradas() {
+        reservaService.cancelarReservasExpiradas();
+        return new ResponseEntity<>(
+                ApiResponse.<String>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatusMessage.getMessage(HttpStatus.OK))
+                        .data("Reservas expiradas fueron canceladas exitosamente.")
+                        .build(),
+                HttpStatus.OK
         );
     }
 }
